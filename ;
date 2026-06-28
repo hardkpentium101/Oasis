@@ -1,0 +1,47 @@
+#include "kernel/types.h"
+
+#include "user/user.h"
+
+int main(int argc, char *argv[]) {
+  int p1[2];
+  int p2[2];
+  pipe(p1);
+  pipe(p2);
+
+  if (fork() == 0) {
+    int num;
+    close(p2[0]);
+    close(p1[1]);
+    while (read(p1[0], &num, sizeof(num)) > 0) {
+      int flag = 0;
+      for (int i = 2; i * i <= num; i++) {
+        if (num % i == 0) {
+          flag = 1;
+          break;
+        }
+      }
+
+      write(p2[1], &flag, sizeof(flag));
+    }
+    close(p1[0]);
+    close(p2[1]);
+    exit(0);
+  } else {
+
+    close(p1[0]);
+    close(p2[1]);
+    for (int i = 2; i <= 35; i++) {
+      int is_prime;
+      write(p1[1], &i, sizeof(i));
+      if (read(p2[0], &is_prime, sizeof(is_prime)) > 0) {
+        if (!is_prime)
+          fprintf(1, "prime %d", i);
+      }
+    }
+    wait(0);
+    close(p1[1]);
+    close(p2[0]);
+  }
+
+  exit(0);
+}
