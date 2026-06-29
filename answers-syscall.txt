@@ -1,0 +1,9 @@
+which function called syscall.c -> usertrap : kernel/trap.c
+value of p->trapframe->a7 <= 15
+What was the previous mode that the CPU was in? -> supervisor
+
+panic inst: lw a3, 0 | num -> a3
+kernel crash reason: num tried loading from the 0x0 restricted virtual memory
+initcode was the binary loaded during the crash, tried making the syscall, pid=1
+
+
