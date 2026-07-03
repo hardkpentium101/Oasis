@@ -6,6 +6,7 @@
 
 #include "proc.h"
 #include "defs.h"
+#include "sysinfo.h"
 uint64 sys_exit(void) {
   int n;
   argint(0, &n);
@@ -78,4 +79,14 @@ uint64 sys_trace(void) {
   argint(0, &n);
   myproc()->mask = n;
   return fork();
+}
+
+uint64 sys_sysinfo(void) 
+{
+  int n;
+  argint(0, &n);
+  struct sysinfo st;
+  st.nproc = proc_count();
+  st.freemem = compute_free_memory();
+  return  copyout(myproc()->pagetable, n, (char*)&st, sizeof(st));
 }
